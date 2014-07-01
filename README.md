@@ -53,10 +53,10 @@
 ### 3. 安装 MT Server
 
 通过 `curl`
-> curl -L -SsO git.io/sdaxnQ | sh 2>&1|tee lnmpa_install.log
+> bash <(curl -sSL git.io/sdaxnQ) 2>&1|tee lnmpa_install.log
 
 通过 `wget`
-> wget --no-check-certificate git.io/sdaxnQ | sh 2>&1|tee lnmpa_install.log
+> bash <(wget --no-check-certificate git.io/sdaxnQ) 2>&1|tee lnmpa_install.log
 
 需以 root 身份执行上述命令
 
