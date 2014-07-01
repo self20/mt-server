@@ -1,0 +1,26 @@
+虽然人人都可以写 LNMPA 脚本，但是要写全写规范还是不容易的。
+借鉴了许多 LNMPA 脚本和教程，感谢名单如下，不分先后：
+
+
+脚本:
+	阿里云vps LNMP 	-	aliyun.com
+	军哥LNMP 1.0	-	lnmp.org
+	Extreme lnmpv 0.4 preview	-	yzs.me
+	centmin-v1.2.3	-	centminmod.com
+	WangYan lanmp	-	github.com/wangyan/lanmp
+	Minstall		-	github.com/maxexcloo/Minstall
+	DirectAdmin		-	directadmin.com
+
+
+
+教程:
+http://hi.baidu.com/travel981cn/item/ed7035ceb610773398b49850
+http://nmshuishui.blog.51cto.com/1850554/1381822
+http://weizhifeng.net/php5.3-apache2-fastcgi-php-fpm.html
+http://blog.csdn.net/kge888/article/details/8985799
+https://mariadb.com/kb/en/generic-build-instructions/
+http://waynerqiu.com/7/153.html
+https://mariadb.com/kb/en/how-to-switch-between-different-installed-mariadb-versions/
+http://dev.mysql.com/doc/
+http://www.flashgou.com/show/159
+...

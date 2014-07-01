@@ -1,0 +1,9 @@
+
+FTP:
+account:www
+password:ftp_password
+
+MySQL:
+account:root
+password:mysql_password
+

@@ -1,0 +1,91 @@
+#! /bin/sh
+# Description:  Redis is a persistent key-value database
+
+### BEGIN INIT INFO
+# Provides:          redis
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the redis server
+# Description:       starts redis server
+### END INIT INFO
+
+#PATH=/usr/local/bin:/sbin:/usr/bin:/bin
+REDISPORT=6379
+EXEC=/usr/local/bin/redis-server
+REDIS_CLI=/usr/local/bin/redis-cli
+PIDFILE=/tmp/redis.pid
+CONF=/etc/redis.conf
+
+add_pid=$(ps aux | grep redis-server | grep Ssl | awk '{print $2}')
+
+if [ "$add_pid" != "" ];then
+    echo "$add_pid" > $PIDFILE
+fi
+
+wait_for_pid () {
+	try=0
+
+	while test $try -lt 35 ; do
+
+		case "$1" in
+			'created')
+			if [ -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+
+			'removed')
+			if [ ! -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+		esac
+
+		try=`expr $try + 1`
+		sleep 1
+
+	done
+
+}
+
+case "$1" in
+ start)
+ if [ -f $PIDFILE ];then
+ 	echo "$PIDFILE exists, process is already running or crashed"
+ else
+	echo "Starting Redis server..."
+	$EXEC $CONF
+	wait_for_pid created $PIDFILE
+	redis_pid=`cat $PIDFILE`
+	echo -17 > /proc/$redis_pid/oom_adj
+ fi
+ if [ "$?"="0" ];then
+	echo "Redis is running..."
+ fi
+ ;;
+ stop)
+ if [ ! -f $PIDFILE ];then
+	echo "$PIDFILE does not exist, process is not running"
+ else
+	PID=$(cat $PIDFILE)
+	echo "Stopping ..."
+	$REDIS_CLI -p $REDISPORT SHUTDOWN
+	while [ -x ${PIDFILE} ] ; do
+		echo "Waiting for Redis to shutdown ..."
+		sleep 1
+	done
+	echo "Redis stopped"
+ fi
+ ;;
+ restart|force-reload)
+ ${0} stop
+ ${0} start
+ ;;
+ *)
+ echo "Usage: /etc/init.d/redis {start|stop|restart|force-reload}" >&2
+ exit 1
+ esac

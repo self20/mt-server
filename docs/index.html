@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!--[if lt IE 9]><script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+<title>MTimer Server 3.0 - LNMPA Script [Apache/Nginx|MySQL/MaridDB|PHP]</title>
+<meta charset="utf-8" />
+<meta name="keywords" content="lnmp, lnmpa, lamp, Apache, Nginx, MySQL, MariaDB, PHP, Linux, LAMP script, LNMP script, LNMPA 一键安装脚本, MTimer Sever 3.0" />
+<meta name="description" content="MTimer Server 3.0 - Amazing LNMPA Script [Apache-Nginx|MySQL-MaridDB|PHP]" />
+
+<!--<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700&amp;subset=latin' rel='stylesheet' type='text/css' />-->
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/mod.css" />
+</head>
+
+
+<body>
+<header>
+<div class="headerCore">
+	<h1 class="logo"><strong>MTimer Server</strong> <span>—</span> LNMPA Script 3.0 <a href="http://dezend-ioncube.com/" target="_blank">Demo</a> <a href="cn/">中文</a></h1> 
+
+	<div class="yashare-auto-init"></div> 
+
+	<div title="MTimer Server Version and Help" class="MTServerVer">ver 3.0</div>
+	<a class="changes fancybox fancybox.ajax" href="http://api.mtimer.cn/lnmpa/ver.php">Changes</a>
+</div>
+</header>
+
+
+
+<div id="wrapper">
+	<div id="content">
+		<section>
+	<h1><span>Family<a href="#mainInfo" title="LNMPA Family" class="about fancybox"></a></span></h1>
+	<div id="mainInfo" class="upCont">
+		<strong class="modalTitle">MTimer Server</strong>
+		<div class="section">
+			<h3>What is MTimer Server?</h3>
+			<p>LNMPA Script - help you install Apache/Nginx + Mysql/MariaDB + PHP on your VPS or Dedicated Server.</p><p>It's the most powerful LNMPA script out there.</p>		</div>
+		<div class="section">
+			<h3>Below is the layout of MTimer Server.</h3>
+			<pre>
+/mtimer [ALL]
+	-----log [Logs location]
+		--nginx
+		--httpd
+		--php
+		--mysql
+		--mariadb
+	-----server [All kinds of Servers]
+		--nginx
+			--conf [Nginx configuration files location]
+				--nginx.conf    ——     nginx configuration file
+				--rewrite       ——     rewrite configuration files location
+				--vhosts        ——     vhosts configuration files location
+				--crons         ——     cron files location
+		--httpd
+			--conf [httpd configuration files location]
+				--httpd.conf    ——     main configuration file
+				--vhosts        ——     vhosts, eg. example.com.conf
+			--conf.d            ——     other configuration files directory, eg. mod_fastcgi.conf [Apache + php 4/5]
+			--crons             ——     cron files location
+		--php
+			--etc [PHP configuration files location]
+				--php-fpm.conf  ——     PHP-FPM configuration file
+				--php.ini       ——     PHP configuration file
+		--mysql                 ——     Note：my.cnf located @ /etc/my.cnf
+		--mariadb
+
+	-----www [*Websites Directory*, containg all websites]
+		--example.com           ——     Default website root directory
+		--soft.example.com      ——     Another website root directory. 
+                                           If Nginx, Fancyindex enabled by default.
+		--phpmyadmin            ——     phpMyAdmin, Access via http://Yourdomain:7772/
+		--adminer               ——     Adminer, Access via http://Yourdomain:7771/
+			</pre>		</div>
+	</div>
+
+
+	<h2>Servers</h2>
+	<div class="cont">
+		<!-- Apache -->
+		<a href="#apache" title="Server {Apache}" class="fancybox box">
+			<b>{Apache}</b>
+			Apache		</a>
+		<div id="apache" class="upCont">
+			<strong class="modalTitle">Server {Apache}</strong>
+			<div class="section">
+				<h3>Support Versions</h3>
+				<p>Apache 2.2.X</p>
+				<p>Apache 2.4.X</p>
+			</div>
+			<div class="section">
+				<h3>Apache Multi-Processing Module</h3>
+					<table class="uses">
+						<tr>
+							<td>v2.2.X</td>
+							<td>prefork - the only option</td>
+						</tr>
+						<tr>
+							<td>v2.4.X</td>
+							<td>event - default. Apache compiled with --enable-mpm-shared option, so you change mpm.</td>
+						</tr>
+					</table>
+			</div>
+		</div>
+
+
+		<!-- Nginx -->
+		<a href="#nginx" title="Server {Nginx}" class="fancybox box">
+			<b>{Nginx}</b>
+			Nginx		</a>
+		<div id="nginx" class="upCont">
+			<strong class="modalTitle">Server {Nginx}</strong>
+			<div class="section">
+				<h3>Support Versions</h3>
+				<p>Always latested stable version since there is no need to use old nginx</p>
+			</div>
+			<!--<div class="download"><a class="exLink" href="/example/nginxhelp.txt">Help!</a></div>-->
+		</div>
+
+
+		<!-- MySQL -->
+		<a href="#mysql" title="{MySQL}" class="fancybox box">
+			<b>{MySQL}</b>
+			MySQL		</a>
+		<div id="mysql" class="upCont">
+			<strong class="modalTitle">Server {MySQL}</strong>
+			<div class="section">
+				<h3>Support Versions</h3>
+				<p>v5.1.X</p>
+				<p>v5.5.X</p>
+				<p>v5.6.X</p>
+			</div>
+			<div class="section">
+				<h3>MySQL is the default option, but you can switch to MariaDB which is opensource.</h3>
+			</div>
+		</div>
+
+
+		<!-- MariaDB -->
+		<a href="#mariadb" title="{MariaDB}" class="fancybox box">
+			<b>{MariaDB}</b>
+			MariaDB		</a>
+		<div id="mariadb" class="upCont">
+			<strong class="modalTitle">Server {MariaDB}</strong>
+			<div class="section">
+				<h3>Support Versions</h3>
+					<table class="uses">
+						<tr>
+							<td>v5.3.X</td>
+							<td>same as MySQL v5.1.X</td>
+						</tr>
+						<tr>
+							<td>v5.5.X</td>
+							<td>same as MySQL v5.5.X</td>
+						</tr>
+						<tr>
+							<td>v10.0.X</td>
+							<td>same as MySQL v5.6.X</td>
+						</tr>
+					</table>
+			</div>
+			<div class="section">
+				<h3>It's almost the same as MySQL. But it's just the better option. </h3>
+			</div>
+		</div>
+
+
+		<!-- PHP -->
+		<a href="#php" title="{PHP}" class="fancybox box">
+			<b>{PHP}</b>
+			PHP		</a>
+		<div id="php" class="upCont">
+			<strong class="modalTitle">Server {PHP}</strong>
+			<div class="section">
+				<h3>Support Versions</h3>
+				<p>v5.3.X</p>
+				<p>v5.4.X</p>
+				<p>v5.5.X</p>
+			</div>
+			<div class="section">
+				<h3>The way PHP works with webserver</h3>
+					<table class="uses">
+						<tr>
+							<td>PHP v5.3.X</td>
+							<td>Apache - mod_php; Nginx - PHP-FPM</td>
+						</tr>
+						<tr>
+							<td>PHP v5.4.X</td>
+							<td>PHP-FPM</td>
+						</tr>
+						<tr>
+							<td>PHP v5.5.X</td>
+							<td>PHP-FPM</td>
+						</tr>
+					</table>
+			</div>
+		</div>
+
+
+		<!-- Dev -->
+		<a href="#developer" title="Developer" class="fancybox box">
+			<b>Developer</b>
+			Extra		</a>
+		<div id="developer" class="upCont">
+			<strong class="modalTitle">For developers</strong>
+			<div class="section">
+				<h3>It can help you install develop environment.</h3>
+					<table class="uses">
+						<tr>
+							<td>Ruby on Rails</td>
+							<td>Ruby + Puma + Builder + Redmine</td>
+						</tr>
+						<tr>
+							<td>Git</td>
+							<td>Gitolite installer</td>
+						</tr>
+						<tr>
+							<td>Python</td>
+							<td>Coming</td>
+						</tr>
+						<tr>
+							<td>Suggestions?</td>
+							<td>Contact: mtimercms@hotmail.com</td>
+						</tr>
+					</table>
+			</div>
+		</div>
+
+
+		<!-- Control -->
+		<a href="#control" title="Control" class="fancybox box">
+			<b>Control</b>
+			PHP		</a>
+		<div id="control" class="upCont">
+			<strong class="modalTitle">Control Servers</strong>
+			<div class="section">
+				<h3>It's easy.</h3>
+					<table class="uses">
+						<tr>
+							<td>Apache</td>
+							<td>service httpd (start | stop | reload | restart)</td>
+						</tr>
+						<tr>
+							<td>Nginx</td>
+							<td>service nginx (start | stop | reload | restart)</td>
+						</tr>
+						<tr>
+							<td>MySQL/MariaDB</td>
+							<td>service mysql (start | stop | reload | restart)</td>
+						</tr>
+						<tr>
+							<td>PHP</td>
+							<td>mod_php: same as Apache.  PHP-FPM: service php-fpm (start | stop | reload | restart)</td>
+						</tr>
+					</table>
+			</div>
+		</div>
+
+
+		<!-- License -->
+		<a href="#license" title="License" class="fancybox box">
+			<b>License</b>
+			License		</a>
+		<div id="license" class="upCont">
+			<strong class="modalTitle">Script License</strong>
+			<div class="section">
+				<h3>Copyright (C) <2014>  &lt;MTimer&gt; (http://www.mtimer.cn)</h3>
+					<pre>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+					</pre>
+			</div>
+		</div>
+
+
+		<!-- More -->
+		<a href="#contentScroll" class="anchor box">
+			<b>Do you like it?</b>
+					</a>
+	</div>
+
+	</section>
+	<section><a name="contentScroll"></a>
+	<h1><span>{Comments}<b></b></span></h1>
+
+	<div id="aboutInfo" class="">
+		<strong class="modalTitle">Comments</strong>
+		<div class="section">
+		    <div id="disqus_thread"></div>
+		    <script type="text/javascript">
+		        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		        var disqus_shortname = 'lnmpa'; // required: replace example with your forum shortname
+
+		        /* * * DON'T EDIT BELOW THIS LINE * * */
+		        (function() {
+		            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+		        })();
+		    </script>
+		    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+		    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+	</div>
+
+
+	</section>
+
+
+	<h1><span>Credits<a href="#otherInfo" title="Thanks to all" class="about fancybox"></a></span></h1>
+	<div id="otherInfo" class="upCont">
+		<strong class="modalTitle">Credits</strong>
+		<div class="section">
+				<h3>Thanks to all.</h3>
+					<table class="uses">
+						<tr>
+							<td>Aliyun LNMP</td>
+							<td>aliyun.com</td>
+						</tr>
+						<tr>
+							<td>LNMP 1.0</td>
+							<td>lnmp.org</td>
+						</tr>
+						<tr>
+							<td>Extreme lnmpv 0.4 preview</td>
+							<td>yzs.me</td>
+						</tr>
+						<tr>
+							<td>centmin-v1.2.3</td>
+							<td>centminmod.com</td>
+						</tr>
+						<tr>
+							<td>WangYan lanmp</td>
+							<td>github.com/wangyan/lanmp</td>
+						</tr>
+						<tr>
+							<td>Minstall</td>
+							<td>github.com/maxexcloo/Minstall</td>
+						</tr>
+						<tr>
+							<td>DirectAdmin</td>
+							<td>directadmin.com</td>
+						</tr>
+					</table>
+		</div>
+	</div>
+
+
+	</div>
+
+	<div class="testTemplate">
+		<a class="testLink" href="http://www.mtimer.cn/">Donate For Premium Version</a>
+		<p><span class="vers">Pro version support change MySQL/MariaDB, Apache/Nginx, PHP versions after installation.</span></p>
+		<a class="fancybox" href="#test">Need help?</a>
+		<div id="test" class="upCont">
+		<p>Email: mtimercms@hotmail.com</p>
+		<p>Donate: </p>
+		      <p>[Paypal/Payza] mtimercms@hotmail.com</p>
+		      <p>[Webmoney] Z369907552397</p>
+		</div>
+	</div>
+
+
+	<div id="content">
+	<section>
+	<h1><span>Nulled BY MTimer<a href="#nullInfo" title="What is Nulled BY MTimer" class="about fancybox"></a></span></h1>
+	<div id="nullInfo" class="upCont">
+		<strong class="modalTitle">Decoded / Nulled BY MTimer</strong>
+		<div class="section">
+			<h3>What is it?</h3>
+			<p>It means all Files Decoded + Nulled. 100% clean, 100% no callbacks.</p><p>There is no one can beat MTimer.</p>		</div>
+		<div class="section">
+			<h3>Contact MTimer For More Details.</h3>
+			<pre> Email: mtimercms@hotmail.com</pre>		</div>
+	</div>
+
+
+	<h2>Demos</h2>
+	<div class="cont">
+		<!-- Whmcs v5.2 -->
+		<a href="http://1.whmcs5.sinaapp.com/whmcs_5.2.17_decoded_nulled_mtimer/?language=English" title="WHMCS v5.2.17 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{WHMCS 5.2}</b>
+			Nulled		</a>
+
+
+		<!-- Whmcs v5.3 -->
+		<a href="http://1.whmcs53nulled.sinaapp.com/whmcs_v5.3.6_full_decoded_nulled/?language=English" title="WHMCS v5.3.7 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{WHMCS 5.3}</b>
+			Nulled		</a>
+
+
+		<!-- eDirectory -->
+		<a href="http://dezend-ioncube.com/eDirectory/" title="eDirectory v10.20 Nulled BY MTimer" class="box" target="_blank">
+			<b>{eDirectory}</b>
+			Nulled		</a>
+
+
+		<!-- EvolutionScript -->
+		<a href="http://dezend-ioncube.com/evolutionscript/" title="EvolutionScript v5.0 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{EvolutionScript}</b>
+			Nulled		</a>
+
+
+		<!-- nTeN -->
+		<a href="http://dezend-ioncube.com/nTeN/" title="nTeN v1.2.1 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{nTeN}</b>
+			Nulled		</a>
+
+
+		<!-- PTC Evolution -->
+		<a href="http://dezend-ioncube.com/ptcevolution/" title="PTC Evolution v4.6 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{PTC Evolution}</b>
+			Nulled		</a>
+
+
+		<!-- Getsy -->
+		<a href="http://dezend-ioncube.com/getsy/" title="Getsy v1.14 Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{Getsy}</b>
+			Nulled		</a>
+
+
+		<!-- PTC Effect -->
+		<a href="http://dezend-ioncube.com/ptceffect/" title="PTC Effect v4.6 Full Decoded Nulled BY MTimer" class="box" target="_blank">
+			<b>{PTC Effect}</b>
+			Nulled		</a>
+
+
+		<!-- Themeforest -->
+		<a href="http://dezend-ioncube.com/themeforest/" title="Themeforest Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{Themeforest}</b>
+			Nulled		</a>
+
+
+		<!-- Codecanyon -->
+		<a href="http://dezend-ioncube.com/codecanyon/" title="Codecanyon Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{Codecanyon}</b>
+			Nulled		</a>
+
+
+		<!-- Audiojungle -->
+		<a href="http://dezend-ioncube.com/audiojungle/" title="Audiojungle Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{Audiojungle}</b>
+			Nulled		</a>
+
+
+		<!-- Graphicriver -->
+		<a href="http://dezend-ioncube.com/graphicriver/" title="Graphicriver Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{Graphicriver}</b>
+			Nulled		</a>
+
+
+		<!-- Activeden -->
+		<a href="http://dezend-ioncube.com/activeden/" title="Activeden Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{Activeden}</b>
+			Nulled		</a>
+
+
+		<!-- 3Docean -->
+		<a href="http://dezend-ioncube.com/3docean/" title="3Docean Clone Nulled BY MTimer" class="box" target="_blank">
+			<b>{3Docean}</b>
+			Nulled		</a>
+	</div>
+	</section>
+
+</div>
+
+<footer>BY MTimer — <a href="mailto:mtimercms@hotmail.com">mtimercms@hotmail.com</a>
+<a rel="nofollow" target="_blank" class="sourse" href="http://www.mtimer.cn/">Source</a>
+</footer>
+
+
+<!-- SCRIPTS -->
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+<script>window.jQuery || document.write('<script src="js/jquery-1.10.2.min.js"><\/script>')</script>
+
+<script src="js/mod.js"></script>
+<script type="text/javascript">
+$(function(){ 
+	$('.cont').masonry({
+		itemSelector: '.box',
+		singleMode: false,
+		isResizable: true,
+		isAnimated: true,
+		animationOptions: { 
+				queue: false, 
+				duration: 500 
+		}
+	}); 
+
+	// Scroll
+	$('a.anchor').bind("click", function(e){
+		var anchor = $(this);
+		var name = anchor.attr('href').replace(new RegExp("#",'gi'), '');
+		$('html, body').stop().animate({
+			scrollTop: $('a[name='+name+']').offset().top
+		}, 1000);
+
+		e.preventDefault();
+		return false;
+	});
+
+	// Hash show
+	$("a.fancybox").filter('.box').click(function() {
+		var hashChange = $(this).attr("href");
+		window.location.hash = hashChange;
+	});
+
+	// fastAnchor
+	var fastAnchor = window.location.hash;
+	if (fastAnchor){	$('a[href$='+fastAnchor+']').filter('.fancybox').fancybox({ openEffect: 'elastic',helpers: { title : null } }).eq(0).trigger('click');	}
+
+	// fancybox
+	$('.fancybox').fancybox({
+		openEffect: 'elastic',
+		helpers: { title : null },
+		afterClose : function() {
+			//clear hash
+			history.pushState("", document.title, window.location.pathname + window.location.search);
+    }
+	});
+});
+</script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+</html>

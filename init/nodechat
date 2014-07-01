@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# nodechat      Start up nodechat server daemon
+#
+# chkconfig: 345 85 15
+# description: Forever for server.js
+#
+PATH=$PATH:/mtimer/server/node/bin
+export NODE_PATH=/mtimer/server/node/lib/node_modules
+name="nodechat"
+forever="/mtimer/server/node/bin/forever"
+script_dir="/mtimer/www/mtimercms/nodechat"
+script_file="server.js"
+PID="/tmp/forever.pid"
+
+ulimit -n 200000
+
+add_pid=$(ps aux | grep node | grep Sl | awk '{print $2}')
+
+if [ "$add_pid" != "" ];then
+  echo "$add_pid" > $PID
+fi
+
+start()
+{
+  USER=root
+  NODE_ENV=production
+  ${forever} start -a -l ${script_dir}/log/forever.log -o ${script_dir}/log/forever_out.log -e ${script_dir}/log/forever_err.log --pidFile $PID --minUptime 100 --spinSleepTime 2000 -a ${script_dir}/${script_file}
+}
+
+stop()
+{
+  ${forever} stop ${script_dir}/${script_file}
+}
+
+restart()
+{
+  ${forever} restart ${script_dir}/${script_file}
+}
+
+case "$1" in
+    start)
+        start
+  ;;
+    stop)
+        stop
+  ;;
+    restart)
+        restart
+  ;;
+    *)
+        echo "Usage: service nodechat {start|stop|restart}" >&2
+        exit 3
+  ;;
+esac

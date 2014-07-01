@@ -1,0 +1,15 @@
+--- 5350.orig.sh	2011-05-27 19:58:32.000000000 +0100
++++ 5350.sh	2011-05-27 19:57:32.000000000 +0100
+@@ -120,6 +120,12 @@
+     for i in $tables; do
+ 	echo -n "$i "
+ 	case "$i" in
++		security) 
++        $IPTABLES -t security -P INPUT $policy \
++          && $IPTABLES -t security -P OUTPUT $policy \
++          && $IPTABLES -t security -P FORWARD $policy \
++          || let ret+=1
++        ;; 
+ 	    raw)
+ 		$IPTABLES -t raw -P PREROUTING $policy \
+ 		    && $IPTABLES -t raw -P OUTPUT $policy \
