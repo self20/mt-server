@@ -1,0 +1,56 @@
+#! /bin/bash
+function Downloadfile()
+{
+	if [ "$WHERE" = "china" ]; then
+		site1="http://mtimercms.u.qiniudn.com/"
+		site2="http://mtimercms.oss.aliyuncs.com/"
+	else
+		site1="http://mtimercms.u.qiniudn.com/"
+		site2="http://mtimercms.oss.aliyuncs.com/"
+	fi
+	randstr=$(date +%s)
+	package="${1##*/}"
+
+	if [ -s ${MPACKAGES_PATH}/$package ]; then
+		echo "[OK] $package found."
+	else
+		echo "[Notice] $package not found, download now......"
+		if ! wget -c --tries=3 -O ${MPACKAGES_PATH}/$package ${site1}${1}?${randstr} >/dev/null 2>&1; then
+			if ! wget -c --tries=3 -O ${MPACKAGES_PATH}/$package ${site2}${1}?${randstr} >/dev/null 2>&1; then
+				echo "[Error] Download Failed : $package, please check $1 "
+				exit 1
+			fi
+		fi
+		echo "[Success] $package Downloaded."
+	fi
+	Unpackfile $package $2
+}
+
+function Unpackfile()
+{
+	file_name=$(echo $1 | sed -r 's/ *(.tar|.gz|.bz2|.zip|.tgz)[0-9]* *//g')
+	file_ext=$(echo $1 |awk -F . '{if (NF>1) {print $NF}}')
+	case $file_ext in
+		zip)
+			unzip ${MPACKAGES_PATH}/$1 -d ${MUNPACKED_PATH} >/dev/null 2>&1
+			;;
+
+		bz2)
+			tar xvjf ${MPACKAGES_PATH}/$1 -C ${MUNPACKED_PATH} >/dev/null 2>&1
+			;;
+
+		tgz|gz)
+			tar zxvf ${MPACKAGES_PATH}/$1 -C ${MUNPACKED_PATH} >/dev/null 2>&1
+			;;
+
+		tar)
+			tar xvf ${MPACKAGES_PATH}/$1 -C ${MUNPACKED_PATH} >/dev/null 2>&1
+			;;
+	esac
+
+	if test -n "$2"; then
+		cd ${MUNPACKED_PATH}/$2
+	else
+		cd ${MUNPACKED_PATH}/$file_name
+	fi
+}

@@ -1,0 +1,149 @@
+#!/bin/bash
+#PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
+#export PATH
+
+# Check if user is root
+if [ $(id -u) != "0" ]; then
+    printf "Error: You must be root to run this script!\n"
+    exit 1
+fi
+
+printf "=========================================================================\n"
+printf "Manager for MTimer Server LNMPA \n"
+printf "=========================================================================\n"
+printf "For more information please visit http://www.mtimer.cn \n"
+printf "\n"
+printf "Usage: /root/lnmpa {start|stop|reload|restart|kill|status}\n"
+printf "=========================================================================\n"
+
+NGINXNAME=nginx
+NGINXCONFIGFILE=/mtimer/server/nginx/conf/$NGINXNAME.conf
+NGINXPIDFILE=/tmp/$NGINXNAME.pid
+NGINXDAEMON=/mtimer/server/nginx/sbin/$NGINXNAME
+PHPFPMNAME=php-fpm
+PHPFPMCONFIGFILE=/mtimer/server/php/etc/$PHPFPMNAME.conf
+PHPFPMPIDFILE=/tmp/$PHPFPMNAME.pid
+PHPFPMDAEMON=/mtimer/server/php/sbin/$PHPFPMNAME
+MYSQLPIDFILE=/tmp/mysql.pid
+
+function_start()
+{
+    printf "Starting LNMPA...\n"
+    if [ -f $NGINXPIDFILE ]; then
+        printf "Nginx is runing!\n"
+        exit 1
+    else
+        $NGINXDAEMON -c $NGINXCONFIGFILE
+        printf "Nginx start successfully!\n"
+    fi
+
+    if [ -f $PHPFPMPIDFILE ]; then
+        printf "php-fpm is runing!\n"
+    else
+    $PHPFPMDAEMON start
+    printf "PHP-FPM start successfully!\n"
+    fi
+
+    if [ -f $MYSQLPIDFILE ]; then
+        printf "MySQL is runing!\n"
+    else
+    /etc/init.d/mysql start
+    printf "MySQL start successfully!\n"
+    fi
+}
+
+function_stop()
+{
+    printf "Stoping LNMPA...\n"
+    if  [ -f $NGINXPIDFILE ]; then
+        kill `cat $NGINXPIDFILE`
+        printf "Nginx program is stop\n"
+    else
+        printf "Nginx program is not runing!\n" 
+    fi
+
+    if  [ -f $PHPFPMPIDFILE ]; then
+        $PHPFPMDAEMON stop
+        printf "PHP-FPM program is stop\n"
+    else
+        printf "PHP-FPM program is not runing!\n" 
+    fi
+
+    if  [ -f $MYSQLPIDFILE ]; then
+        /etc/init.d/mysql stop
+        printf "MySQL program is stop\n"
+    else
+        printf "MySQL program is not runing!\n" 
+    fi
+}
+
+function_reload()
+{
+    printf "Reload LNMPA...\n"
+    printf "Reload Nginx configure...\n"
+    $NGINXDAEMON -t
+    $NGINXDAEMON -s reload
+    printf "Nginx program is reloding!\n"
+    /etc/init.d/mysql reload
+    $PHPFPMDAEMON reload
+}
+
+function_restart()
+{
+    printf "Reload LNMPA...\n"
+    printf "Reload Nginx configure...\n"
+    $NGINXDAEMON -t
+    kill `cat $NGINXPIDFILE`
+    $NGINXDAEMON -c $NGINXCONFIGFILE
+    printf "Nginx program is restarting!\n"
+    /etc/init.d/mysql restart
+    $PHPFPMDAEMON restart
+}
+
+function_kill()
+{
+    kill `cat $NGINXPIDFILE`
+    kill `cat $PHPFPMPIDFILE`
+    kill `cat $MYSQLPIDFILE`
+}
+
+function_status()
+{
+    if [ -f $NGINXPIDFILE ]; then
+      printf "Nginx is runing!\n"
+    else
+    printf "Nginx is stop!\n"
+    fi
+
+    if [ -f $PHPFPMPIDFILE ]; then
+      printf "php-fpm is runing!\n"
+    else
+    printf "php-fpm is stop!\n"
+    fi
+/etc/init.d/mysql status
+}
+
+case "$1" in
+    start)
+        function_start
+        ;;
+    stop)
+        function_stop
+        ;;
+    restart)
+        function_stop
+        function_start
+        ;;
+    reload)
+        function_reload
+        ;;
+    kill)
+        function_kill
+        ;;
+    status)
+        function_status
+        ;;
+    *)
+        printf "Usage: /root/lnmpa {start|stop|reload|restart|kill|status}\n"
+esac
+exit

@@ -1,0 +1,157 @@
+#! /bin/sh
+# chkconfig: 2345 55 25
+# Description: Startup script for nginx webserver on Debian. Place in /etc/init.d and
+# run 'update-rc.d -f nginx defaults', or use the appropriate command on your
+# distro. For CentOS/Redhat run: chkconfig --add nginx        #加入开机启动选项中 
+#run: chkconfig nginx on 设置开机自动启动
+#run: service nginx  start 启动nginx 服务
+
+### BEGIN INIT INFO
+# Provides:          nginx
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts the nginx web server
+# Description:       starts nginx using start-stop-daemon
+### END INIT INFO
+
+# website:  http://www.mtimer.cn
+
+#PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="nginx daemon"
+NAME=nginx
+DAEMON=/mtimer/server/nginx/sbin/$NAME
+CONFIGFILE=/mtimer/server/nginx/conf/$NAME.conf
+PIDFILE=/tmp/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+set -e
+[ -x "$DAEMON" ] || exit 0
+
+add_pid=$(ps aux | grep nginx | grep master | awk '{print $2}')
+
+if [ "$add_pid" != "" ];then
+    echo "$add_pid" > $PIDFILE
+fi
+
+wait_for_pid () {
+	try=0
+
+	while test $try -lt 35 ; do
+
+		case "$1" in
+			'created')
+			if [ -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+
+			'removed')
+			if [ ! -f "$2" ] ; then
+				try=''
+				break
+			fi
+			;;
+		esac
+
+		echo -n .
+		try=`expr $try + 1`
+		sleep 1
+
+	done
+
+}
+
+do_start() {
+	if [ ! -d "/tmp/nginx/client" ];then
+		mkdir -p /tmp/nginx/client
+	fi
+	$DAEMON -c $CONFIGFILE || echo -n "nginx already running"
+
+	wait_for_pid created $PIDFILE
+
+	if [ -n "$try" ] ; then
+		echo " failed"
+		exit 1
+	else
+		echo " done"
+	fi
+
+	nginx_pid=`cat $PIDFILE`
+	echo -17 > /proc/$nginx_pid/oom_adj
+}
+
+do_stop() {
+	kill -INT `cat $PIDFILE` || echo -n "nginx not running"
+
+	wait_for_pid removed $PIDFILE
+
+	if [ -n "$try" ] ; then
+		echo " failed"
+		exit 1
+	else
+		echo " done"
+	fi
+}
+
+do_reload() {
+	kill -HUP `cat $PIDFILE` || echo -n "nginx can't reload"
+	echo " done"
+}
+
+do_restart() {
+	kill -INT `cat $PIDFILE` || echo -n "nginx not running"
+
+	wait_for_pid removed $PIDFILE
+
+	if [ -n "$try" ] ; then
+		echo -n " stop failed"
+		exit 1
+	else
+		echo -n " stopped"
+	fi
+
+	if [ ! -d "/tmp/nginx/client" ];then
+		mkdir -p /tmp/nginx/client
+	fi
+	$DAEMON -c $CONFIGFILE || echo -n "nginx already running"
+
+	wait_for_pid created $PIDFILE
+
+	if [ -n "$try" ] ; then
+		echo " start failed"
+		exit 1
+	else
+		echo " started."
+	fi
+
+	nginx_pid=`cat $PIDFILE`
+	echo -17 > /proc/$nginx_pid/oom_adj
+}
+
+case "$1" in
+ start)
+ echo -n "Starting $DESC: $NAME"
+ do_start
+ ;;
+ stop)
+ echo -n "Stopping $DESC: $NAME"
+ do_stop
+ ;;
+ reload|graceful)
+ echo -n "Reloading $DESC configuration..."
+ do_reload
+ ;;
+ restart)
+ echo -n "Restarting $DESC: $NAME"
+ do_restart
+ ;;
+ *)
+ echo "Usage: $SCRIPTNAME {start|stop|reload|restart}" >&2
+ exit 3
+ ;;
+esac
+
+exit 0
